@@ -75,18 +75,17 @@
 
         async function geojsonFetch() {
             try {
-                let response, earthquakes, japan, map;
+                let response, earthquakes, japan;
                 response = await fetch('assets/earthquakes.geojson');
                 if (!response.ok) throw new Error('Failed to fetch earthquakes data');
                 earthquakes = await response.json();
 
-                response = await fetch('assets/map.geojson');
-                if (!response.ok) throw new Error('Failed to fetch map data');
-                map = await response.json();
-
                 response = await fetch('assets/japan.json');
                 if (!response.ok) throw new Error('Failed to fetch japan data');
                 japan = await response.json();
+                
+                response = await fetch('assets/map.geojson');
+                newmap2 = await response.json();
 
                 map.on('load', function loadingData() {
                     map.addSource('earthquakes', {
@@ -134,15 +133,15 @@
                     cell2.innerHTML = earthquakes.features[i].properties.mag;
                     cell3.innerHTML = new Date(earthquakes.features[i].properties.time).toLocaleDateString("en-US");
                 }
-                for (let i = 0; i < map.features.length; i++) {
+                for (let i = 0; i < newmap2.features.length; i++) {
                     row = table.insertRow(-1);
                     cell1 = row.insertCell(0);
                     cell2 = row.insertCell(1);
                     cell3 = row.insertCell(2);
       
-                    cell1.innerHTML = map.features[i].properties.id;
-                    cell2.innerHTML = map.features[i].properties.mag;
-                    cell3.innerHTML = new Date(map.features[i].properties.time).toLocaleDateString("en-US");
+                    cell1.innerHTML = newmap2.features[i].properties.id;
+                    cell2.innerHTML = newmap2.features[i].properties.mag;
+                    cell3.innerHTML = new Date(newmap2.features[i].properties.time).toLocaleDateString("en-US");
         }
 
 

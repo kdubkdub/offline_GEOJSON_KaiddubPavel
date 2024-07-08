@@ -68,17 +68,21 @@
         mapboxgl.accessToken = 'pk.eyJ1Ijoia3BhdmVsIiwiYSI6ImNsc2ZpMm91dTFuaHIycW8ybHcwMnNlZmcifQ.4mRHJ5iWEJ4nbAHNzxUnaA';
         let map = new mapboxgl.Map({
             container: 'map', // container ID
-            style: 'mapbox://styles/mapbox/satellite-v9', // style URL
+            style: 'mapbox://styles/mapbox/dark-v11', // style URL
             zoom: 5.5, // starting zoom
             center: [138, 38] // starting center
         });
 
         async function geojsonFetch() {
             try {
-                let response, earthquakes, japan;
+                let response, earthquakes, japan, map;
                 response = await fetch('assets/earthquakes.geojson');
                 if (!response.ok) throw new Error('Failed to fetch earthquakes data');
                 earthquakes = await response.json();
+
+                response = await fetch('assets/map.geojson');
+                if (!response.ok) throw new Error('Failed to fetch map data');
+                map = await response.json();
 
                 response = await fetch('assets/japan.json');
                 if (!response.ok) throw new Error('Failed to fetch japan data');
@@ -130,6 +134,17 @@
                     cell2.innerHTML = earthquakes.features[i].properties.mag;
                     cell3.innerHTML = new Date(earthquakes.features[i].properties.time).toLocaleDateString("en-US");
                 }
+                for (let i = 0; i < map.features.length; i++) {
+                    row = table.insertRow(-1);
+                    cell1 = row.insertCell(0);
+                    cell2 = row.insertCell(1);
+                    cell3 = row.insertCell(2);
+      
+                    cell1.innerHTML = map.features[i].properties.id;
+                    cell2.innerHTML = map.features[i].properties.mag;
+                    cell3.innerHTML = new Date(map.features[i].properties.time).toLocaleDateString("en-US");
+        }
+
 
                 // Add event listener to the button for sorting the table
                 let btn = document.getElementsByTagName("button")[0];

@@ -75,16 +75,16 @@
 
         async function geojsonFetch() {
             try {
-                let response, japan;
+                let response, japan, newmap2;
                 response = await fetch('assets/japan.json');
                 if (!response.ok) throw new Error('Failed to fetch japan data');
                 japan = await response.json();
                 
                 response = await fetch('assets/map.geojson');
+                if (!response.ok) throw new Error('Failed to fetch new map data');
                 newmap2 = await response.json();
 
                 map.on('load', function loadingData() {
-
                     map.addSource('japan', {
                         type: 'geojson',
                         data: japan
@@ -99,9 +99,26 @@
                             'fill-opacity': 0.5
                         }
                     });
+
+                    map.addSource('newmap2', {
+                        type: 'geojson',
+                        data: newmap2
+                    });
+
+                    map.addLayer({
+                        'id': 'newmap2-layer',
+                        'type': 'circle',
+                        'source': 'newmap2',
+                        'paint': {
+                            'circle-radius': 8,
+                            'circle-stroke-width': 2,
+                            'circle-color': 'red',
+                            'circle-stroke-color': 'white'
+                        }
+                    });
                 });
 
-                // Populate the table with earthquake data
+                // Populate the table with newmap2 data
                 let table = document.getElementsByTagName("table")[0];
                 let row, cell1, cell2, cell3;
                 for (let i = 0; i < newmap2.features.length; i++) {
@@ -109,12 +126,10 @@
                     cell1 = row.insertCell(0);
                     cell2 = row.insertCell(1);
                     cell3 = row.insertCell(2);
-      
                     cell1.innerHTML = newmap2.features[i].properties.id;
                     cell2.innerHTML = newmap2.features[i].properties.mag;
                     cell3.innerHTML = new Date(newmap2.features[i].properties.time).toLocaleDateString("en-US");
-        }
-
+                }
 
                 // Add event listener to the button for sorting the table
                 let btn = document.getElementsByTagName("button")[0];
